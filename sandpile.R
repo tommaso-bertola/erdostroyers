@@ -1,12 +1,13 @@
-library(igraph)
-
-sandpile <- function(graph, n_iters) {
-  degrees <- degree(graph)
-  adj_mat <- get.adjacency(graph)
+sandpile <- function(graph, n_iters, sink_frac) {
+  degrees <- igraph::degree(graph)
+  adj_mat <- igraph::get.adjacency(graph)
   # number of nodes
   n <- length(degrees)
   # "grains" in each node
   loads <- rep(0, length(degrees))
+
+  # avalanche length (timesteps)
+  durations <- c()
 
   for (i in 1:n_iters) {
     # choose node at random
@@ -16,19 +17,28 @@ sandpile <- function(graph, n_iters) {
     # check if the node is overflowing
     if (loads[pick] >= degrees[pick]) {
       loads[pick] <- 0
+      count <- 1
       # select neighbours and offload
-      nbs <- which(adj_mat[, pick] == 1)
+      nbs <- adj_mat[, pick, drop = FALSE]@i + 1
       loads[nbs] <- loads[nbs] + 1
 
       overs <- which(loads >= degrees)
       while (length(overs) > 0) {
         loads[overs] <- 0
-        nbs <- which(adj_mat[, overs] == 1)
+        nbs <- adj_mat[, overs, drop = FALSE]@i + 1
+        # drop grains with probability sink_frac
+        nbs <- nbs[runif(length(nbs)) > sink_frac]
         loads[nbs] <- loads[nbs] + 1
 
         # update overflown nodes
         overs <- which(loads >= degrees)
+        count <- count + 1
       }
+
+      # save avalanche duration
+      durations <- c(durations, count)
     }
   }
+
+  list(loads = loads, durations = durations)
 }
