@@ -1,10 +1,16 @@
 sandpile <- function(graph, n_iters, sink_frac) {
+  if (igraph::clusters(graph)$no > 1) {
+    stop("Network has >= 1 connected components!")
+  }
+
   degrees <- igraph::degree(graph)
   adj_mat <- igraph::get.adjacency(graph)
   # number of nodes
   n <- length(degrees)
   # "grains" in each node
   loads <- rep(0, length(degrees))
+
+  durations <- c()
 
   # avalanche length (timesteps)
   durations <- c()
@@ -23,6 +29,7 @@ sandpile <- function(graph, n_iters, sink_frac) {
       loads[nbs] <- loads[nbs] + 1
 
       overs <- which(loads >= degrees)
+      count <- 1
       while (length(overs) > 0) {
         loads[overs] <- 0
         nbs <- adj_mat[, overs, drop = FALSE]@i + 1
