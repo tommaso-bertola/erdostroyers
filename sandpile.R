@@ -14,6 +14,7 @@ sandpile <- function(graph, n_iters, sink_frac) {
 
   # avalanche parameters
   durations <- c()
+  affected <- c()
   areas <- c()
   sizes <- c()
   grains <- c()
@@ -60,6 +61,7 @@ sandpile <- function(graph, n_iters, sink_frac) {
 
       # save avalanche parameters
       durations <- c(durations, d_cnt)
+      affected <- c(affected, a_cnt)
       areas <- c(areas, length(a_cnt))
       sizes <- c(sizes, s_cnt)
       grains <- c(grains, g_cnt)
@@ -68,6 +70,7 @@ sandpile <- function(graph, n_iters, sink_frac) {
 
   list(
     loads = loads,
+    affected = affected,
     durations = durations,
     areas = areas,
     sizes = sizes,
