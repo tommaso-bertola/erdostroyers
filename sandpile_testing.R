@@ -19,13 +19,12 @@ plot(
   vertex.label = NA, vertex.size = sqrt(degree(g))
 )
 
-l_smpl <- seq(1, 5e3, length = 5)[-1] |> as.integer()
-sp <- sandpile(g, 5e3, 10^-4, samples = l_smpl)
+sp <- sandpile(g, n_iters = 5e3, sink_frac = 10^-4, sample_freq = 50)
 
 g_data <- data.table(
   node = 1:vcount(g),
   degree = degree(g),
-  load = sp$loads
+  load = sp$loads[[length(sp$loads)]]$after
 )
 
 loads <- g_data[load > 0, .(degree, load, fill_perc = 100 * load / degree)]
