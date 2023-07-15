@@ -21,7 +21,7 @@ plot(
   vertex.label = NA, vertex.size = sqrt(degree(g))
 )
 
-sp <- sandpile(g, n_iters = 7e3, sink_frac = 10^-4, sample_freq = 50)
+sp <- sandpile(g, n_iters = 1e6, sink_frac = 10^-4, sample_freq = Inf)
 
 g_data <- data.table(
   node = 1:vcount(g),
@@ -54,3 +54,5 @@ ggplot(g_data) +
   geom_histogram(aes(x = degree), fill = "firebrick", binwidth = 1)
 
 g <- make_graph(~ 1--2, 2--3, 2--4, 2--5, 4--5)
+
+g <- make_full_graph(50)
