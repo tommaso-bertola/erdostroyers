@@ -1,4 +1,5 @@
-sandpile <- function(graph, n_iters, sink_frac) {
+sandpile <- function(graph, n_iters, sink_frac, samples,
+                     bef_aft = c(TRUE, TRUE)) {
   if (igraph::clusters(graph)$no > 1) {
     stop("Network has >= 1 connected components!")
   }
@@ -14,23 +15,33 @@ sandpile <- function(graph, n_iters, sink_frac) {
   # avalanche parameters
   durations <- c()
   affected <- c()
+  whens <- c()
   areas <- c()
   sizes <- c()
   grains <- c()
 
-  for (i in 1:n_iters) {
-    # choose node at random (floor(runif()) is faster than sample)
+  # to save `loads` samples (happening when iter == samples)
+  load_samples <- vector(mode = "list", length = length(samples))
+  s <- 1
+
+  for (t in 1:n_iters) {
+    # choose node at random (floor(runif()) is faster than sample())
     pick <- floor(runif(1, min = 1, max = max_smpl))
     loads[pick] <- loads[pick] + 1
+
+    if (t %in% samples && bef_aft[1]) {
+      load_samples[[s]] <- loads
+      if (!bef_aft[2]) s <- s + 1
+    }
 
     # check if the node is overflowing
     if (loads[pick] >= degrees[pick]) {
       d_cnt <- 1
-      # for the area, track the unique indices
-      # of affected notes
+      # for the area, track the unique indices of affected notes
       a_cnt <- pick
       s_cnt <- 1
       g_cnt <- loads[pick]
+      whens <- c(whens, t)
 
       loads[pick] <- 0
       # select neighbours and offload
@@ -65,11 +76,21 @@ sandpile <- function(graph, n_iters, sink_frac) {
       sizes <- c(sizes, s_cnt)
       grains <- c(grains, g_cnt)
     }
+
+    if (t %in% samples && bef_aft[2]) {
+      if (bef_aft[1]) {
+        load_samples[[s]] <- list(load_samples[[s]], loads)
+      } else {
+        load_samples[[s]] <- loads
+      }
+      s <- s + 1
+    }
   }
 
   list(
-    loads = loads,
+    loads = load_samples,
     affected = affected,
+    whens = whens,
     durations = durations,
     areas = areas,
     sizes = sizes,
