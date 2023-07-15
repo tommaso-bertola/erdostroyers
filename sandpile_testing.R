@@ -2,7 +2,7 @@ library(data.table)
 library(igraph)
 library(ggplot2)
 theme_set(
-  theme_minimal(base_size = 15, base_family = "Fira Sans Condensed")
+  theme_bw(base_size = 15, base_family = "Fira Sans Condensed")
 )
 source("sandpile.R")
 
@@ -11,6 +11,7 @@ g <- sample_fitness_pl(
   no.of.edges = 5000,
   exponent.out = 2.5
 )
+clusters(g)$no # test number of clusters
 
 plot(
   g, layout = layout_with_fr(g),
@@ -18,20 +19,25 @@ plot(
   vertex.label = NA, vertex.size = sqrt(degree(g))
 )
 
-sp <- sandpile(g, 1e5, 10^-4)
+sp <- sandpile(g, 5e3, 10^-4)
 
-# save in datatable all variables except loads
-sp_dt <- as.data.table(sp[-1])
+g_data <- data.table(
+  node = 1:vcount(g),
+  degree = degree(g),
+  load = sp$loads
+)
 
-n_avs <- nrow(sp_dt)
+loads <- g_data[load > 0, .(degree, load, fill_perc = 100 * load / degree)]
 
-# subset events before the first whole-network avalanche
-# ("before full capacity")
-sp_bfc <- sp_dt[1:(min(which(areas == 1000)) - 1)]
-time <- seq_len(nrow(sp_bfc))
-
-sp_bfc[areas != sizes]
-
-ggplot(sp_bfc, aes(x = seq_len(nrow(sp_bfc)))) +
-  geom_line(aes(y = areas), colour = "black") +
-  geom_line(aes(y = sizes), colour = "firebrick")
+ggplot(data = loads, aes(x = fill_perc)) +
+  geom_histogram(binwidth = 5, boundary = 0, fill = "aquamarine4") +
+  scale_x_continuous(
+    breaks = scales::pretty_breaks(),
+    expand = expansion(mult = c(0, 0)),
+    limits = c(0, 100)
+  ) +
+  scale_y_continuous(
+    breaks = scales::pretty_breaks(),
+    expand = expansion(mult = c(0, 0.1))
+  ) +
+  labs(x = "Filled capacity (%)", y = "Count")
