@@ -1,4 +1,4 @@
-sandpile <- function(graph, n_iters, sink_frac, sample_freq) {
+sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
   if (igraph::clusters(graph)$no > 1) {
     stop("Network has >= 1 connected components!")
   }
