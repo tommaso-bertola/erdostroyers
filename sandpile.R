@@ -17,7 +17,8 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq) {
   whens <- c()
   areas <- c()
   sizes <- c()
-  grains <- c()
+  total_grains <- c()
+  toppled_grains <- c()
 
   # to save `loads` samples
   load_samples <- list()
@@ -77,7 +78,8 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq) {
       toppled <- c(toppled, top)
       areas <- c(areas, length(unique(top)))
       sizes <- c(sizes, length(top))
-      grains <- c(grains, g_cnt)
+      total_grains <- c(total_grains, sum(loads))
+      toppled_grains <- c(toppled_grains, g_cnt)
 
       # add after-loads if we're in a sampling window
       if (sample_now) {
@@ -97,6 +99,7 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq) {
     durations = durations,
     areas = areas,
     sizes = sizes,
-    grains = grains
+    total_grains = total_grains,
+    toppled_grains = toppled_grains
   )
 }
