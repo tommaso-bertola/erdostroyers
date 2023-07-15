@@ -19,7 +19,8 @@ plot(
   vertex.label = NA, vertex.size = sqrt(degree(g))
 )
 
-sp <- sandpile(g, 5e3, 10^-4)
+l_smpl <- seq(1, 5e3, length = 5)[-1] |> as.integer()
+sp <- sandpile(g, 5e3, 10^-4, samples = l_smpl)
 
 g_data <- data.table(
   node = 1:vcount(g),
