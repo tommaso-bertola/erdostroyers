@@ -5,8 +5,7 @@ sandpile <- function(graph, n_iters, sink_frac) {
 
   degrees <- igraph::degree(graph)
   adj_mat <- igraph::get.adjacency(graph)
-  # number of nodes
-  n <- length(degrees)
+  max_smpl <- length(degrees) + 1 # upper bound for sampling idx
   # "grains" in each node
   loads <- rep(0, length(degrees))
 
@@ -20,8 +19,8 @@ sandpile <- function(graph, n_iters, sink_frac) {
   grains <- c()
 
   for (i in 1:n_iters) {
-    # choose node at random
-    pick <- sample(1:n, 1)
+    # choose node at random (floor(runif()) is faster than sample)
+    pick <- floor(runif(1, min = 1, max = max_smpl))
     loads[pick] <- loads[pick] + 1
 
     # check if the node is overflowing
