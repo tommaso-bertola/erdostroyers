@@ -1,0 +1,7 @@
+# prop_name, value
+name,internet_as
+description,"A symmetrized snapshot of the structure of the Internet at the level of Autonomous Systems (ASs), reconstructed from BGP tables posted by the University of Oregon Route Views Project. This snapshot was created on 22 July 2006"
+citation,"['B. Karrer, M.E.J. Newman, and L. Zdeborova, \"Percolation on sparse networks.\" Phys. Rev. Lett. 113, 208702 (2014)., http://arxiv.org/abs/1405.0483']"
+url,http://www-personal.umich.edu/~mejn/netdata
+tags,"['Technological', 'Communication', 'Unweighted']"
+directed,0.0
