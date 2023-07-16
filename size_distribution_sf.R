@@ -8,7 +8,10 @@ get_sizes_sf <- function(gamma, n, m, n_iters, sink_frac) {
       no.of.edges = m,
       exponent.out = gamma
     )
-    if (clusters(g)$no == 1) break
+    if (clusters(g)$no == 1) {
+      print("Found network with 1 CC, proceeding...")
+      break
+    }
   }
 
   sp <- sandpile(g, n_iters = n_iters, sink_frac = sink_frac)
@@ -21,7 +24,7 @@ size_dist_sf <- function(gammas, n_samples, n, m, n_iters, sink_frac) {
   require(foreach)
   require(doParallel)
 
-  cluster <- parallel::makeCluster(3)
+  cluster <- parallel::makeCluster(2)
   parallel::clusterExport(cluster, "get_sizes_sf")
   registerDoParallel(cluster)
 
@@ -34,7 +37,10 @@ size_dist_sf <- function(gammas, n_samples, n, m, n_iters, sink_frac) {
   size_data <- data.table(
     purrr::map(
       gammas,
-      \(g) ensemble(g, n, m, n_iters, sink_frac)
+      function(g) {
+        print(paste0("Simulating with gamma = ", g))
+        return(ensemble(g, n, m, n_iters, sink_frac))
+      }
     )
   )[, c(list(gamma = gammas), .SD)]
   names(size_data)[2] <- "sizes"
