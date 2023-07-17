@@ -10,14 +10,18 @@ g = graph_from_data_frame(edges_df, directed=F, vertices=nodes_df)
 
 d = distances(g)
 
-p = 10
+p = 1
 
 packets = data.frame("id"=integer(), "curr"=integer(), "dest"=integer(), "time"=integer())
 p_id = 0
-tmax = 10000
+tmax = 10
 
 times = c()
+
+trajectory = c()
+
 for(t in 1:tmax) {
+    if(!(t%%10)) {print(t);flush.console();}
     for(i in 1:p) {
         #generate new packet
         packets = rbind(packets, data.frame("id"=p_id, "curr"=as.integer(runif(1, 1, num_nodes+1)), "dest"=as.integer(runif(1, 1, num_nodes+1)), "time"=0))
@@ -39,4 +43,5 @@ for(t in 1:tmax) {
     if(length(to_remove) != 0) {
         packets = packets[-to_remove,]
     }
+    trajectory = c(trajectory, packets[1, "curr"])
 }
