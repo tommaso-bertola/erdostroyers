@@ -1,7 +1,7 @@
 library(igraph)
 
-nodes_df = read.csv("network/nodes_cleaned.csv")
-edges_df = read.csv("network/edges.csv")
+nodes_df = read.csv("Kdl/nodes_cleaned.csv")
+edges_df = read.csv("Kdl/edges.csv")
 
 num_nodes = nrow(nodes_df)
 nodes_df[, "queue"] = NA
@@ -10,11 +10,11 @@ g = graph_from_data_frame(edges_df, directed=F, vertices=nodes_df)
 
 d = distances(g)
 
-p = 1
+p = 10
 
 packets = data.frame("id"=integer(), "curr"=integer(), "dest"=integer(), "time"=integer())
 p_id = 0
-tmax = 10
+tmax = 500
 
 times = c()
 
@@ -33,7 +33,8 @@ for(t in 1:tmax) {
         a=d[packets[j, "curr"],]
         neighbors = (1:num_nodes)[a == 1]
         distances = d[neighbors, packets[j, "dest"]]
-        packets[j, "curr"] = sample(neighbors[distances == min(distances)], 1)
+        closest_neighbors = neighbors[distances == min(distances)]
+        packets[j, "curr"] = closest_neighbors[sample(length(closest_neighbors), 1)]
         packets[j, "time"] = packets[j, "time"] + 1
         if(packets[j, "curr"] == packets[j, "dest"]) {
             to_remove = c(to_remove, j)
