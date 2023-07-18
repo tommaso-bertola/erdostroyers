@@ -32,7 +32,7 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
     loads[pick] <- loads[pick] + 1
 
     # check if the node is overflowing
-    if (loads[pick] >= degrees[pick]) {
+    if (loads[pick] == degrees[pick]) {
       # we're in an avalanche --> update counter
       a_cnt <- a_cnt + 1
       # print loads before avalanche every sample_freq avalanches
@@ -50,6 +50,8 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
 
       loads[pick] <- 0
       # select neighbours and offload
+      # drop = F is needed because when length(pick) is 1
+      # `[` returns a vector
       nbs <- adj_mat[, pick, drop = FALSE]@i + 1
       loads[nbs] <- loads[nbs] + 1
 
@@ -61,7 +63,7 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
         top <- c(top, overs)
         g_cnt <- g_cnt + sum(loads[overs])
 
-        loads[overs] <- 0
+        loads[overs] <- loads[overs] - degrees[overs]
         nbs <- adj_mat[, overs, drop = FALSE]@i + 1
         # drop grains with probability sink_frac
         nbs <- nbs[runif(length(nbs)) > sink_frac]
