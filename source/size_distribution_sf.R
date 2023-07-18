@@ -1,13 +1,17 @@
 get_sizes_sf <- function(gamma, n, m, n_iters, sink_frac) {
+  # return the avalanche sizes from a sandpile dynamics on a 
+  # scale-free network
   require(igraph)
   source("sandpile.R")
 
+  # generate a network with the static model
   repeat {
     g <- sample_fitness_pl(
       no.of.nodes = n,
       no.of.edges = m,
       exponent.out = gamma
     )
+    # we want only one cc
     if (clusters(g)$no == 1) {
       print("Found network with 1 CC, proceeding...")
       break
@@ -20,6 +24,9 @@ get_sizes_sf <- function(gamma, n, m, n_iters, sink_frac) {
 }
 
 size_dist_sf <- function(gammas, n_samples, n, m, n_iters, sink_frac) {
+  # returns a data.table with the avalanche size distributions from
+  # n_samples sandpile dynamics on a network with gamma = gammas
+  # (so if you provide three gammas the simulation runs 300 times)
   require(data.table)
   require(foreach)
   require(doParallel)
@@ -34,6 +41,8 @@ size_dist_sf <- function(gammas, n_samples, n, m, n_iters, sink_frac) {
     }
   }
 
+  # organize size lists in a data.table
+  # one `gamma` column and one `sizes` column of vectors
   size_data <- data.table(
     purrr::map(
       gammas,
