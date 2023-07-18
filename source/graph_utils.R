@@ -8,19 +8,20 @@ get_lcc <- function(graph, mode = "weak") {
   return(induced_subgraph(graph, lcc_verts))
 }
 
-get_top_matrix <- function(graph, sp){
-  n <- vcount(g)
-  top_matrix <- matrix(0, nrow = n, ncol = n)
-  for(top in sp$toppled){
-    top <- sp$toppled[[509]]
-    for(i in seq_along(top)){
-      for(j in (i+1):length(top)) {
-        if((i+1)<=length(top)){ 
-          top_matrix[top[i], top[j]] <- top_matrix[top[i], top[j]] + 1
-        }
+get_top_matrix <- function(sp, n_nodes) {
+  # get the toppling matrix for the sandpile dynamics object `sp`
+  # top_matrix[i, j] = number of toppling events in node j that
+  #                    that came after a toppling in node i
+
+  top_matrix <- matrix(0, nrow = n_nodes, ncol = n_nodes)
+  for (top in sp$toppled) {
+    t <- length(top)
+    for (i in seq_len(t - 1)) {
+      for (j in seq(i + 1, t)) {
+        top_matrix[top[i], top[j]] <- top_matrix[top[i], top[j]] + 1
       }
     }
   }
-  
+
   return(top_matrix)
 }
