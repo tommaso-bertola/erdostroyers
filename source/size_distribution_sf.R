@@ -2,7 +2,7 @@ get_sizes_sf <- function(gamma, n, m, n_iters, sink_frac) {
   # return the avalanche sizes from a sandpile dynamics on a 
   # scale-free network
   require(igraph)
-  source("source/sandpile.R")
+  source(here::here("source", "sandpile.R"))
 
   # generate a network with the static model
   repeat {
@@ -32,23 +32,22 @@ size_dist_sf <- function(gammas, n_samples, n, m, n_iters, sink_frac) {
   require(doParallel)
 
   cluster <- parallel::makeCluster(2)
-  parallel::clusterExport(cluster, "get_sizes_sf")
+  parallel::clusterExport(
+    cluster, c("get_sizes_sf", "n", "m", "n_iters", "sink_frac")
+  )
   registerDoParallel(cluster)
-
-  ensemble <- function(gamma, n, m, n_iters, sink_frac) {
-    foreach(s = 1:n_samples, .combine = "c", .inorder = FALSE) %dopar% {
-      get_sizes_sf(gamma, n, m, n_iters, sink_frac)
-    }
-  }
 
   # organize size lists in a data.table
   # one `gamma` column and one `sizes` column of vectors
+  smp <- 1:n_samples
   size_data <- data.table(
     purrr::map(
       gammas,
       function(g) {
         print(paste0("Simulating with gamma = ", g))
-        return(ensemble(g, n, m, n_iters, sink_frac))
+        foreach(s = smp, .combine = "c", .inorder = FALSE) %dopar% {
+          get_sizes_sf(g, n, m, n_iters, sink_frac)
+        }
       }
     )
   )[, c(list(gamma = gammas), .SD)]
