@@ -2,7 +2,7 @@ get_sizes_sf <- function(gamma, n, m, n_iters, sink_frac) {
   # return the avalanche sizes from a sandpile dynamics on a 
   # scale-free network
   require(igraph)
-  source("sandpile.R")
+  source("source/sandpile.R")
 
   # generate a network with the static model
   repeat {
