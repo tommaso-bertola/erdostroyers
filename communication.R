@@ -1,15 +1,17 @@
 library(igraph)
+load("modbagraph.RData")
 
-nodes_df = read.csv("network/nodes_cleaned.csv")
-edges_df = read.csv("network/edges.csv")
+#nodes_df = read.csv("network/nodes_cleaned.csv")
+#edges_df = read.csv("network/edges.csv")
 
-num_nodes = nrow(nodes_df)
+num_nodes = length(V(g)$label)
+#num_nodes = nrow(nodes_df)
 nodes_queue = list()
 for(i in 1:num_nodes+1){
     nodes_queue[i]=c()
 }
 
-g = graph_from_data_frame(edges_df, directed=F, vertices=nodes_df)
+#g = graph_from_data_frame(edges_df, directed=F, vertices=nodes_df)
 
 d = distances(g)
 

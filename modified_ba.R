@@ -2,7 +2,7 @@ library(igraph)
 
 #create BA network
 m0 = 10 #nodes of initial starting network (in paper: 3)
-m = 3 #in paper number of outgoing connections m = 3
+m = 3 #in paper number of outgoing connections: m = 3
 mu = 0.5 #affinity tolerance, BA limit corresponds to mu = 1
 t = 100 #total size = t + m0
 
@@ -29,3 +29,5 @@ for(i in 1:t){
 #pdf("modified_ba_graph.pdf")
 plot(g, vertex.label=NA, vertex.size=0.2)
 #dev.off()
+
+save(g, file="modbagraph.RData")
