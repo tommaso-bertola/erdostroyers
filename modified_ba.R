@@ -4,7 +4,7 @@ library(igraph)
 m0 = 10 #nodes of initial starting network (in paper: 3)
 m = 3 #in paper number of outgoing connections: m = 3
 mu = 0.5 #affinity tolerance, BA limit corresponds to mu = 1
-t = 100 #total size = t + m0
+t = 10000 #total size = t + m0
 
 g = barabasi.game(n = m0, m = m, directed = FALSE) #starting network
 V(g)$label = runif(m0, min = 0, max = 1) #affinity
@@ -27,7 +27,28 @@ for(i in 1:t){
 }
 
 #pdf("modified_ba_graph.pdf")
-plot(g, vertex.label=NA, vertex.size=0.2)
+#plot(g, vertex.label=NA, vertex.size=0.2)
 #dev.off()
 
 save(g, file="modbagraph.RData")
+
+hist(degree(g), breaks=100)
+
+deg_distro = degree_distribution(g)
+x = 0:(length(deg_distro)-1)
+
+plot(log(x), log(deg_distro))
+
+#now we want to find out the degree exponent
+#we fit a straight line to the data point with a frequency across threshold
+#threshold: cut off everything from the first time there is a frequency of zero
+bound = which.min(deg_distro[(m+1):length(deg_distro)])
+deg_distro_fit = deg_distro[(m+1):(bound-1)]
+x_fit = (m+1):(bound-1)
+
+data_fit = data.frame(y = log(deg_distro_fit), x = log(x_fit))
+deg_exp = lm(y~x, data_fit)
+summary(deg_exp)
+
+degree_exponent = -coef(deg_exp)[2]
+

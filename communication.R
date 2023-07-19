@@ -25,7 +25,7 @@ h = 0.75
 
 for(pi in 1:length(new_packets)) {
     times = c()
-    p = new_packets[pi]/num_nodes
+    p = new_packets[pi]#/num_nodes
     
     packets = data.frame("id"=integer(), "curr"=integer(), "dest"=integer(), "time"=integer())
     p_id = 0
@@ -35,22 +35,22 @@ for(pi in 1:length(new_packets)) {
     
     for(t in 1:tmax) {
         if(!(t%%200)) {print(t);flush.console();}
-#         for(i in 1:p) {
-#             #generate new packet
-#             curr = as.integer(runif(1, 1, num_nodes+1))
-#             packets = rbind(packets, data.frame("id"=p_id, "curr"=curr, "dest"=as.integer(runif(1, 1, num_nodes+1)), "time"=0))
-#             
-#             nodes_queue[[curr]] = c(nodes_queue[[curr]], p_id)
-#             p_id = p_id + 1
-#         }
-        probs = runif(num_nodes)
-        for(i in 1:num_nodes) {
-            if(probs[i]<p){
-                packets = rbind(packets, data.frame("id"=p_id, "curr"=i, "dest"=as.integer(runif(1, 1, num_nodes+1)), "time"=0))
-                nodes_queue[[i]] = c(nodes_queue[[i]], p_id)
-                p_id = p_id + 1
-            }
-        }
+         for(i in 1:p) {
+             #generate new packet
+             curr = as.integer(runif(1, 1, num_nodes+1))
+             packets = rbind(packets, data.frame("id"=p_id, "curr"=curr, "dest"=as.integer(runif(1, 1, num_nodes+1)), "time"=0))
+             
+             nodes_queue[[curr]] = c(nodes_queue[[curr]], p_id)
+             p_id = p_id + 1
+         }
+#        probs = runif(num_nodes)
+#        for(i in 1:num_nodes) {
+#            if(probs[i]<p){
+#                packets = rbind(packets, data.frame("id"=p_id, "curr"=i, "dest"=as.integer(runif(1, 1, num_nodes+1)), "time"=0))
+#                nodes_queue[[i]] = c(nodes_queue[[i]], p_id)
+#                p_id = p_id + 1
+#            }
+#        }
         to_remove = c()
         for(j in 1:nrow(packets)) {
             #print(nodes_queue[[packets[j,"curr"]]])
@@ -76,7 +76,7 @@ for(pi in 1:length(new_packets)) {
         }
         A[pi,t] = nrow(packets)
     }
-    print(mean(times))
-    print(length(times)/(tmax*p))
-    print(mean(packets[,"time"]))
+    print(mean(times)) #mean time of packets arriving
+    print(length(times)/(tmax*p)) #fraction of packets arriving
+    print(mean(packets[,"time"])) #mean time of packets not arriving
 }
