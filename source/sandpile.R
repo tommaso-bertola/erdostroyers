@@ -8,7 +8,7 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
   n_nodes <- igraph::vcount(graph)
   max_smp <- n_nodes + 1 # upper bound for sampling idx
   # "grains" in each node
-  loads <- rep(0, length(degrees))
+  loads <- rep(0, n_nodes)
 
   durations <- c()
 
@@ -16,7 +16,6 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
   durations <- c()
   toppled <- list()
   whens <- c()
-  areas <- c()
   sizes <- c()
   # total and toppled grains
   tot_gr <- c()
@@ -64,13 +63,6 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
         # update counters
         d_cnt <- d_cnt + 1
         top <- c(top, overs)
-        # check if the avalanche is too big
-        # (thus likely to keep on forever)
-        if (length(top) > n_nodes) {
-          print("Big avalanches region reached! Aborting...")
-          big_aval <- TRUE
-          break
-        }
         g_cnt <- g_cnt + sum(loads[overs])
 
         loads[overs] <- loads[overs] - degrees[overs]
@@ -91,7 +83,6 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
       # save avalanche parameters
       durations <- c(durations, d_cnt)
       toppled[[a_cnt]] <- top
-      areas <- c(areas, length(unique(top)))
       sizes <- c(sizes, length(top))
       tot_gr <- c(tot_gr, sum(loads))
       top_gr <- c(top_gr, g_cnt)
@@ -112,7 +103,6 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
     toppled = toppled,
     whens = whens,
     durations = durations,
-    areas = areas,
     sizes = sizes,
     tot_gr = tot_gr,
     top_gr = top_gr
