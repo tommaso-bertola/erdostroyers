@@ -47,13 +47,13 @@ alphas <- c(0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.
 
 
 
-n <- 1000
-k_min <- 2
+n <- 20000
+k_min <- 1
 k_max <- n
-gamma <- 3.1
+gamma <- 2.8
 weights <- (k_min:k_max)^(-gamma)
 
-n_averages <- 40
+n_averages <- 20
 
 g_alphas <- vector()
 err_g_alphas <- vector()
@@ -62,8 +62,14 @@ err_g_alphas_random <- vector()
 for (a in seq_along(alphas)) {
     avg_g <- vector()
     avg_g_random <- vector()
+    degs <- sample(c(k_min:k_max), size = n, replace = TRUE, prob = weights)
+    if (sum(degs) %% 2 == 1) {
+        degs[1] <- degs[1] + 1
+    }
     for (i in 1:n_averages) {
-        g <- sample_degseq_safely(n, k_min, k_max, weights)
+        g <- sample_degseq(out.deg = degs, method = "simple.no.multiple.uniform")
+        lcc_index <- which.max(components(g)$csize)
+        g <- delete_vertices(g, V(g)[components(g)$membership != lcc_index])
         # g <- sample_pa(n = n, out.seq = degs)
         avg_g[i] <- survived(g, alphas[a])
         avg_g_random[i] <- survived_random(g, alphas[a])
@@ -82,7 +88,7 @@ df <- data.frame(
     mean_random = g_alphas_random,
     err_mean_random = err_g_alphas_random
 )
-write.csv(df, "conf_1000_40means_31gamma_2kmin.csv")
+write.csv(df, "conf_20000_keep_lcc_20means_2.8gamma_1kmin.csv")
 
 # write.csv(df, paste("test", Sys.time(), sep = ""))
 # print(g_alphas)
