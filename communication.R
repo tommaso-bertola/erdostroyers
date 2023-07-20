@@ -1,7 +1,7 @@
 library(igraph)
-if(T) {
+if(F) {
     load("modbagraph.RData")
-    num_nodes = length(V(g)$label)
+    num_nodes = length(V(g)$name)
     print("using BA-like network")
 } else {
     nodes_df = read.csv("network/nodes_cleaned.csv")
@@ -15,10 +15,9 @@ if(T) {
 
 d = distances(g)
 
-#new_packets = c(0.5, 1.5, 3, 10)
-new_packets=50
+new_packets = c(3,5,10,20)
 
-tmax = 1000
+tmax = 500
 
 A = matrix(nrow=length(new_packets), ncol=tmax)
 
@@ -87,3 +86,12 @@ for(pi in 1:length(new_packets)) {
      print(length(times)/(p_id)) #fraction of packets arriving
      print(mean(packets[,"time"])) #mean time of packets not arriving
 }
+
+png("A_net")
+plot(A[length(new_packets),], type="l", main=NA, xlab="time", ylab="Active packets")
+if(length(new_packets)!=1) {
+    for(i in 1:(length(new_packets)-1)) {
+        lines(A[i,])
+    }
+}
+dev.off()
