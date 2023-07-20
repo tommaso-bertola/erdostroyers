@@ -3,8 +3,8 @@ library(igraph)
 #create BA network
 m0 = 10 #nodes of initial starting network (in paper: 3)
 m = 3 #in paper number of outgoing connections: m = 3
-mu = 0.5 #affinity tolerance, BA limit corresponds to mu = 1
-t = 10000 #total size = t + m0
+mu = 0.3 #affinity tolerance, BA limit corresponds to mu = 1
+t = 1000 #total size = t + m0
 
 g = barabasi.game(n = m0, m = m, directed = FALSE) #starting network
 V(g)$label = runif(m0, min = 0, max = 1) #affinity
@@ -50,5 +50,4 @@ data_fit = data.frame(y = log(deg_distro_fit), x = log(x_fit))
 deg_exp = lm(y~x, data_fit)
 summary(deg_exp)
 
-degree_exponent = -coef(deg_exp)[2]
-
+degree_exponent = -coef(deg_exp)[2] #corresponds to value mentioned in paper where the tolerance model is explained more in detail
