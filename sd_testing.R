@@ -1,14 +1,32 @@
+library(igraph)
 library(data.table)
 library(ggplot2)
 theme_set(
   theme_bw(base_size = 10, base_family = "Fira Sans Condensed")
 )
-source("size_distribution_sf.R")
+source("source/sandpile.R")
+source("source/size_distribution_sf.R")
+
+repeat {
+  g <- sample_fitness_pl(
+    no.of.nodes = 1e3,
+    no.of.edges = 1e4,
+    exponent.out = 2.5
+  )
+  if (clusters(g)$no == 1) break
+}
+
+sp <- sandpile(g, 2.5e4, 0.01, stop_at_soc = T)
+sizes <- data.table(
+  s = sp$sizes[5000:length(sp$sizes)]
+)[, .(.N), keyby = s]
+
+plot(log(sizes$s), log(sizes$N))
 
 gammas <- c(2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9)
-n <- 1e4
-m <- 15e4
-n_iters <- m
+n <- 1e3
+m <- 5e3
+n_iters <- 1e4
 sink_frac <- 1e-4
 sizes <- size_dist_sf(gammas, n_samples = 100, n, m, n_iters, sink_frac)
 
