@@ -1,4 +1,6 @@
-sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
+sandpile <- function(
+  graph, n_iters, sink_frac, sample_freq = Inf, stop_at_soc = FALSE
+) {
   if (igraph::clusters(graph)$no > 1) {
     stop("Network has >= 1 connected components!")
   }
@@ -64,6 +66,13 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
         # update counters
         d_cnt <- d_cnt + 1
         top <- c(top, overs)
+        # check if the avalanche is too big
+        # (thus likely to keep on forever)
+        if (stop_at_soc && length(top) > n_nodes) {
+          print("Big avalanches region reached! Aborting...")
+          big_aval <- TRUE
+          break
+        }
         g_cnt <- g_cnt + sum(loads[overs])
 
         loads[overs] <- loads[overs] - degrees[overs]
