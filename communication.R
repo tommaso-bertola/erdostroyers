@@ -15,9 +15,9 @@ if(F) {
 
 d = distances(g)
 
-new_packets = c(3,5,10,20)
+new_packets = c(75, 100, 125)
 
-tmax = 500
+tmax = 400
 
 A = matrix(nrow=length(new_packets), ncol=tmax)
 
@@ -35,6 +35,7 @@ for(pi in 1:length(new_packets)) {
     packets = data.frame("id"=integer(), "curr"=integer(), "dest"=integer(), "time"=integer())
     p_id = 0
     
+    print("new cycle")
     print(p)
     flush.console()
     
@@ -88,7 +89,9 @@ for(pi in 1:length(new_packets)) {
 }
 
 png("A_net")
-plot(A[length(new_packets),], type="l", main=NA, xlab="time", ylab="Active packets")
+plot(A[length(new_packets),])
+ymax=par("usr")[4]
+plot(A[length(new_packets),], type="l", main=NA, xlab="time", ylab="Active packets", ylim=c(0, ymax))
 if(length(new_packets)!=1) {
     for(i in 1:(length(new_packets)-1)) {
         lines(A[i,])
