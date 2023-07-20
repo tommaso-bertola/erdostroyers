@@ -2,8 +2,9 @@ source("delete_func.R")
 
 # alphas <- seq(from = 0.1, to = 0.9, by = 0.05)
 # alphas <- c(0.001, 0.01, 0.03, 0.05, 0.08, seq(from = 0.1, to = 1, by = 0.05), 1.5, 2)
-alphas <- c(0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00, 1.10, 1.20, 1.50)
-
+# alphas <- c(0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00, 1.10, 1.20, 1.50)
+alphas<-seq(from=0, to=0.5, by=0.03)
+# alphas
 
 n <- 1000
 # k_min <- 2
@@ -81,4 +82,4 @@ deg <- data.frame(
 
 conf <- rbind(btw, rnd, deg)
 
-write.csv(conf, "pa_1000n_40mean_4m.csv")
+write.csv(conf, "pa_1000n_40mean_4m_zoom.csv")

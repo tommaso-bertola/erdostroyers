@@ -27,7 +27,7 @@ survived <- cmpfun(survived)
 survived_deg <- function(g, alpha) {
     V(g)$load <- betweenness(g, v = V(g), directed = FALSE)
     V(g)$capacity <- (1 + alpha) * V(g)$load
-    overloaded <- order(degree(g), decreasing = TRUE)[1]
+    overloaded <- sample(order(degree(g), decreasing = TRUE)[1:10], size=1)
 
     g_or <- g
 

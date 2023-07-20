@@ -1,17 +1,36 @@
 source("delete_func.R")
 
 # alphas <- seq(from = 0.1, to = 0.9, by = 0.05)
-# alphas <- c(0.001, 0.01, 0.03, 0.05, 0.08)
 # alphas <- c(0.001, 0.01, 0.03, 0.05, 0.08, seq(from = 0.1, to = 1, by = 0.05), 1.5, 2)
-# alphas <- c(0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00, 1.10, 1.20, 1.50)
-alphas<-seq(from=0, to=0.3, by=0.01)
+alphas <- c(0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00, 1.10, 1.20, 1.50)
 
+# dim <- 1
+# nei <- 5
 n <- 1000
-p <-  1.1*log(n) / n
+# p <- nei / 2 / n
 # k_min <- 2
 # k_max <- n
 # gamma <- 3
 # weights <- (k_min:k_max)^(-gamma)
+
+sizes <- runif(n = 8)
+sizes <- round(sizes / sum(sizes) * 1000, 0)
+sizes[1] <- 1000 - sum(sizes[-1])
+
+prob_matr <- matrix(0, nrow = 8, ncol = 8)
+
+prob_matr[1, 2] <- 0.008
+prob_matr[1, 3] <- 0.007
+prob_matr[1, 4] <- 0.008
+prob_matr[1, 5] <- 0.005
+prob_matr[2, 8] <- 0.003
+prob_matr[4, 6] <- 0.008
+prob_matr[6, 7] <- 0.007
+prob_matr[7, 8] <- 0.009
+prob_matr <- prob_matr + t(prob_matr)
+prob_matr <- prob_matr + diag(nrow = 8) * log(max(sizes)) / max(sizes)
+
+# sample_sbm(n=1000, pref.matrix = prob_matr, block.sizes = sizes, directed = FALSE)
 
 n_averages <- 40
 
@@ -28,14 +47,15 @@ for (a in seq_along(alphas)) {
     for (i in 1:n_averages) {
         # degs <- sample(c(k_min:k_max), size = n, replace = TRUE, prob = weights)
         # if (sum(degs) %% 2 == 1) {
-        #     degs[1] <- degs[1] + 1
+        #     degs[2] <- degs[2] + 1
         # }
         # g <- sample_degseq(out.deg = degs, method = "vl")
-        # g <- sample_pa(n = n, out.seq = degs)
-        g_conf <- sample_gnp(n = n, p = p)
-        avg_g[i] <- survived(g_conf, alphas[a])
-        avg_g_random[i] <- survived_random(g_conf, alphas[a])
-        avg_g_deg[i] <- survived_deg(g_conf, alphas[a])
+        # g <- sample_pa(n = n, out.seq = degs, directed = FALSE)
+        # g <- sample_pa(n = n, m = 3, directed = FALSE)
+        g <- sample_sbm(n, prob_matr, sizes, directed = FALSE)
+        avg_g[i] <- survived(g, alphas[a])
+        avg_g_random[i] <- survived_random(g, alphas[a])
+        avg_g_deg[i] <- survived_deg(g, alphas[a])
         print(paste(i, alphas[a]))
     }
     g_alphas[a] <- mean(avg_g)
@@ -53,13 +73,11 @@ for (a in seq_along(alphas)) {
 #     mean_random = g_alphas_random,
 #     err_mean_random = err_g_alphas_random
 # )
-# write.csv(df, "er_1000_40means_11logn.csv")
 
-# write.csv(df, paste("test", Sys.time(), sep = ""))
+# write.csv(df, "sw_1000_40means_with_4nei_1dim_10_100p.csv")
 # print(g_alphas)
 
 # plot(alphas, g_alphas)
-
 
 btw <- data.frame(
     alpha = alphas,
@@ -84,4 +102,4 @@ deg <- data.frame(
 
 conf <- rbind(btw, rnd, deg)
 
-write.csv(conf, "er_1000n_11lognnp_40means_zoom.csv")
+write.csv(conf, "sbm_1000n_40means_new.csv")
