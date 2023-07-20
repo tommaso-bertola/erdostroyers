@@ -58,6 +58,8 @@ sandpile <- function(
       # drop = F is needed because when length(pick) is 1
       # `[` returns a vector
       nbs <- adj_mat[, pick, drop = FALSE]@i + 1
+      # drop grains with probability sink_frac
+      nbs <- nbs[runif(length(nbs)) > sink_frac]
       loads[nbs] <- loads[nbs] + 1
 
       # check if avalanche is proceeding
@@ -73,7 +75,7 @@ sandpile <- function(
           big_aval <- TRUE
           break
         }
-        g_cnt <- g_cnt + sum(loads[overs])
+        g_cnt <- g_cnt + sum(degrees[overs])
 
         loads[overs] <- loads[overs] - degrees[overs]
         nbs <- adj_mat[, overs, drop = FALSE]@i + 1
