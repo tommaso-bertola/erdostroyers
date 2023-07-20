@@ -2,21 +2,23 @@ library(igraph)
 if(T) {
     load("modbagraph.RData")
     num_nodes = length(V(g)$label)
-}
-else {
+    print("using BA-like network")
+} else {
     nodes_df = read.csv("network/nodes_cleaned.csv")
     edges_df = read.csv("network/edges.csv")
     
     num_nodes = nrow(nodes_df)
     
     g = graph_from_data_frame(edges_df, directed=F, vertices=nodes_df)
+    print("using internet network")
 }
 
 d = distances(g)
 
-new_packets = c(0.5, 1.5, 3, 10)
+#new_packets = c(0.5, 1.5, 3, 10)
+new_packets=50
 
-tmax = 2000
+tmax = 1000
 
 A = matrix(nrow=length(new_packets), ncol=tmax)
 
@@ -66,10 +68,11 @@ for(pi in 1:length(new_packets)) {
                     distances = h * d[neighbors, packets[j, "dest"]] + (1-h) * sapply(nodes_queue[neighbors], length)
                     closest_neighbors = neighbors[distances == min(distances)]
                     packets[j, "curr"] = closest_neighbors[sample(length(closest_neighbors), 1)]
-                    nodes_queue[[packets[j, "curr"]]] = c(nodes_queue[[packets[j, "curr"]]], packets[j, "id"])
                     if(packets[j, "curr"] == packets[j, "dest"]) {
                         to_remove = c(to_remove, j)
                         times = c(times, packets[j, "time"])
+                    } else {
+                        nodes_queue[[packets[j, "curr"]]] = c(nodes_queue[[packets[j, "curr"]]], packets[j, "id"])
                     }
                 }
                 packets[j, "time"] = packets[j, "time"] + 1
