@@ -16,6 +16,7 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
   durations <- c()
   toppled <- list()
   whens <- c()
+  areas <- c()
   sizes <- c()
   # total and toppled grains
   tot_gr <- c()
@@ -83,6 +84,7 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
       # save avalanche parameters
       durations <- c(durations, d_cnt)
       toppled[[a_cnt]] <- top
+      areas <- c(areas, length(unique(top)))
       sizes <- c(sizes, length(top))
       tot_gr <- c(tot_gr, sum(loads))
       top_gr <- c(top_gr, g_cnt)
@@ -103,6 +105,7 @@ sandpile <- function(graph, n_iters, sink_frac, sample_freq = Inf) {
     toppled = toppled,
     whens = whens,
     durations = durations,
+    areas = areas,
     sizes = sizes,
     tot_gr = tot_gr,
     top_gr = top_gr
