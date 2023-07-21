@@ -4,20 +4,20 @@ if(F) {
     num_nodes = length(V(g)$name)
     print("using BA-like network")
 } else {
-    nodes_df = read.csv("network/nodes_cleaned.csv")
-    edges_df = read.csv("network/edges.csv")
+    nodes_df = read.csv("Kdl/nodes_cleaned.csv")
+    edges_df = read.csv("Kdl/edges.csv")
     
     num_nodes = nrow(nodes_df)
     
     g = graph_from_data_frame(edges_df, directed=F, vertices=nodes_df)
-    print("using internet network")
+    print("using kdl network")
 }
 
 d = distances(g)
 
-new_packets = c(75, 100, 125)
+new_packets = c(2, 3, 10)
 
-tmax = 400
+tmax = 800
 
 A = matrix(nrow=length(new_packets), ncol=tmax)
 
@@ -58,10 +58,12 @@ for(pi in 1:length(new_packets)) {
             }
         }
         to_remove = c()
+        nodes_ready = rep(T, num_nodes)
         if(nrow(packets)!=0) {
             for(j in 1:nrow(packets)) {
-                if(nodes_queue[[packets[j,"curr"]]][1] == packets[j, "id"]) {
-                    nodes_queue[[packets[j,"curr"]]] = nodes_queue[[packets[j,"curr"]]][-1]
+                if(nodes_queue[[packets[j, "curr"]]][1] == packets[j, "id"] && nodes_ready[packets[j, "curr"]]) {
+                    nodes_queue[[packets[j, "curr"]]] = nodes_queue[[packets[j, "curr"]]][-1]
+                    nodes_ready[packets[j, "curr"]] = F
                     #decide movement
                     a=d[packets[j, "curr"],]
                     neighbors = (1:num_nodes)[a == 1]
@@ -88,13 +90,17 @@ for(pi in 1:length(new_packets)) {
      print(mean(packets[,"time"])) #mean time of packets not arriving
 }
 
-png("A_net")
+
+
+colors=c("red", "green", "blue", "pink", "violet", "orange")
+
+png("A_kdl_2")
 plot(A[length(new_packets),])
 ymax=par("usr")[4]
 plot(A[length(new_packets),], type="l", main=NA, xlab="time", ylab="Active packets", ylim=c(0, ymax))
 if(length(new_packets)!=1) {
     for(i in 1:(length(new_packets)-1)) {
-        lines(A[i,])
+        lines(A[i,], col=colors[i])
     }
 }
 dev.off()
