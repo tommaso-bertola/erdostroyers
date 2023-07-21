@@ -4,20 +4,20 @@ if(F) {
     num_nodes = length(V(g)$name)
     print("using BA-like network")
 } else {
-    nodes_df = read.csv("Kdl/nodes_cleaned.csv")
-    edges_df = read.csv("Kdl/edges.csv")
+    nodes_df = read.csv("network/nodes_cleaned.csv")
+    edges_df = read.csv("network/edges.csv")
     
     num_nodes = nrow(nodes_df)
     
     g = graph_from_data_frame(edges_df, directed=F, vertices=nodes_df)
-    print("using kdl network")
+    print("using internet network")
 }
 
 d = distances(g)
 
-new_packets = c(2, 3, 10)
+new_packets = c(14,15,16,17,18,19)
 
-tmax = 800
+tmax = 1000
 
 A = matrix(nrow=length(new_packets), ncol=tmax)
 
@@ -92,9 +92,9 @@ for(pi in 1:length(new_packets)) {
 
 
 
-colors=c("red", "green", "blue", "pink", "violet", "orange")
+colors=c("red", "green", "blue", "pink", "violet", "orange", "#eeee00")
 
-png("A_kdl_2")
+png("A_net.png")
 plot(A[length(new_packets),])
 ymax=par("usr")[4]
 plot(A[length(new_packets),], type="l", main=NA, xlab="time", ylab="Active packets", ylim=c(0, ymax))
@@ -104,3 +104,9 @@ if(length(new_packets)!=1) {
     }
 }
 dev.off()
+
+diffs = c()
+for(i in 1:length(new_packets)) {
+    diffs=c(diffs, mean(diff(A[i,(tmax-400):tmax], lag=10))/(10*new_packets[i]))
+}
+print(diffs)
