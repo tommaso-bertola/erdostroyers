@@ -15,7 +15,7 @@ if(F) {
 
 d = distances(g)
 
-new_packets = c(14,15,16,17,18,19)
+new_packets = c(13, 20, 21)
 
 tmax = 1000
 
@@ -92,18 +92,18 @@ for(pi in 1:length(new_packets)) {
 
 
 
-colors=c("red", "green", "blue", "pink", "violet", "orange", "#eeee00")
+# colors=c("red", "green", "blue", "pink", "violet", "orange", "#eeee00")
 
-png("A_net.png")
-plot(A[length(new_packets),])
-ymax=par("usr")[4]
-plot(A[length(new_packets),], type="l", main=NA, xlab="time", ylab="Active packets", ylim=c(0, ymax))
-if(length(new_packets)!=1) {
-    for(i in 1:(length(new_packets)-1)) {
-        lines(A[i,], col=colors[i])
-    }
-}
-dev.off()
+# png("A_net.png")
+# plot(A[length(new_packets),])
+# ymax=par("usr")[4]
+# plot(A[length(new_packets),]/new_packets[len(new_packets)], type="l", main=NA, xlab="time", ylab="Active packets", ylim=c(0, ymax))
+# if(length(new_packets)!=1) {
+#     for(i in 1:(length(new_packets)-1)) {
+#         lines(A[i,]/new_packets[i], col=colors[i])
+#     }
+# }
+# dev.off()
 
 diffs = c()
 for(i in 1:length(new_packets)) {
