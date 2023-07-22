@@ -34,7 +34,7 @@ logbins <- function(data, base = 10, dlog = 0.1) {
   cnt <- cnt[order(cnt$val), ]
 
   # get (log-)midpoints and lower/upper limits (to nearest integer)
-  log_mid <- seq(0, log(max(cnt$val), base), by = dlog)
+  log_mid <- seq(0, log(max(cnt$val), base) + dlog, by = dlog)
   lower <- ceiling(base^(log_mid - 0.5 * dlog))
   upper <- floor(base^(log_mid + 0.5 * dlog))
 
@@ -54,7 +54,13 @@ logbins <- function(data, base = 10, dlog = 0.1) {
     )
   )
   # take the remaining x values from the midpoints defined before
-  x <- c(x, base^log_mid[bin_window])
+  x <- c(log10(x), log_mid[bin_window])
 
-  return(data.frame(x = x, y = y))
+  res <- data.frame(x = x, y = y)
+  # remove rows with 0 counts
+  res <- res[res$y > 0, ]
+  # return log of counts
+  res$y <- log(res$y, base)
+
+  return(res)
 }
