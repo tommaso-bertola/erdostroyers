@@ -143,20 +143,24 @@ sandpile_sz <- function(graph, n_iters, sink_frac) {
     loads[pick] <- loads[pick] + 1
 
     if (loads[pick] == degrees[pick]) {
-      top <- pick
+      s_cnt <- 1
 
       loads[pick] <- 0
       nbs <- adj_mat[, pick, drop = FALSE]@i + 1
-      nbs <- nbs[runif(length(nbs)) > sink_frac]
+      to_keep <- runif(length(nbs)) > sink_frac
+      is_bulk <- all(to_keep)
+      nbs <- nbs[to_keep]
       loads[nbs] <- loads[nbs] + 1
 
       overs <- which(loads >= degrees)
       while (length(overs) > 0) {
-        top <- c(top, overs)
+        s_cnt <- s_cnt + length(overs)
 
         loads[overs] <- loads[overs] - degrees[overs]
         nbs <- adj_mat[, overs, drop = FALSE]@i + 1
-        nbs <- nbs[runif(length(nbs)) > sink_frac]
+        to_keep <- runif(length(nbs)) > sink_frac
+        is_bulk <- all(c(is_bulk, to_keep))
+        nbs <- nbs[to_keep]
         for (n in nbs) {
           loads[n] <- loads[n] + 1
         }
@@ -164,7 +168,7 @@ sandpile_sz <- function(graph, n_iters, sink_frac) {
         overs <- which(loads >= degrees)
       }
 
-      sizes <- c(sizes, length(top))
+      if (is_bulk) sizes <- c(sizes, s_cnt)
     }
   }
 
