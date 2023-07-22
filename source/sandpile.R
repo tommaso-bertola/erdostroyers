@@ -48,7 +48,6 @@ sandpile <- function(
       }
 
       d_cnt <- 1
-      # for the area, track the unique indices of affected notes
       top <- pick
       g_cnt <- loads[pick]
       whens <- c(whens, t)
@@ -60,8 +59,10 @@ sandpile <- function(
       nbs <- adj_mat[, pick, drop = FALSE]@i + 1
       # drop grains with probability sink_frac
       to_keep <- runif(length(nbs)) > sink_frac
+      # keep a boolean to check if bulk avalanche (no grain loss)
       is_bulk <- all(to_keep)
       nbs <- nbs[to_keep]
+      # update neighbours' loads
       loads[nbs] <- loads[nbs] + 1
 
       # check if avalanche is proceeding
@@ -79,10 +80,12 @@ sandpile <- function(
         }
         g_cnt <- g_cnt + sum(degrees[overs])
 
+        # subtract the redistributed grains from overs
         loads[overs] <- loads[overs] - degrees[overs]
         nbs <- adj_mat[, overs, drop = FALSE]@i + 1
         # drop grains with probability sink_frac
         to_keep <- runif(length(nbs)) > sink_frac
+        # check again if there are lost grains
         is_bulk <- all(c(is_bulk, to_keep))
         nbs <- nbs[to_keep]
         for (n in nbs) {
@@ -96,7 +99,7 @@ sandpile <- function(
       # exit if we are in the big avalanches region
       if (big_aval) break
 
-      # save avalanche parameters
+      # save avalanche parameters, only for bulk avalanches
       if (is_bulk) {
         durations <- c(durations, d_cnt)
         toppled[[a_cnt]] <- top
