@@ -1,39 +1,47 @@
-get_sizes_sf <- function(gamma, n, m, n_iters, sink_frac) {
-  # return the avalanche sizes from a sandpile dynamics on a 
+get_sizes_sf <- function(
+  gamma, n, m, n_iters, sink_frac, start_ind, lcc = FALSE
+) {
+  # return the avalanche sizes from a sandpile dynamics on a
   # scale-free network
-  require(igraph)
+  source(here::here("source", "graph_utils.R"))
   source(here::here("source", "sandpile.R"))
 
   # generate a network with the static model
   repeat {
-    g <- sample_fitness_pl(
+    g <- igraph::sample_fitness_pl(
       no.of.nodes = n,
       no.of.edges = m,
       exponent.out = gamma
     )
     # we want only one cc
-    if (clusters(g)$no == 1) {
+    if (lcc) {
+      g <- get_lcc(g)
+      break
+    } else if (igraph::clusters(g)$no == 1) {
       print("Found network with 1 CC, proceeding...")
       break
     }
   }
 
-  sp <- sandpile(g, n_iters = n_iters, sink_frac = sink_frac)
+  sp <- sandpile_sz(g, n_iters = n_iters, sink_frac = sink_frac)
 
-  return(sp$sizes)
+  return(tail(sp, -start_ind))
 }
 
-size_dist_sf <- function(gammas, n_samples, n, m, n_iters, sink_frac) {
+size_dist_sf <- function(
+  gammas, n_samples, n, m, n_iters, sink_frac, start_ind
+) {
   # returns a data.table with the avalanche size distributions from
   # n_samples sandpile dynamics on a network with gamma = gammas
-  # (so if you provide three gammas the simulation runs 300 times)
+  # (so if you set three gammas the simulation runs 3 * n_samples times)
   require(data.table)
   require(foreach)
   require(doParallel)
 
   cluster <- parallel::makeCluster(2)
   parallel::clusterExport(
-    cluster, c("get_sizes_sf", "n", "m", "n_iters", "sink_frac")
+    cluster,
+    c("get_sizes_sf", "n", "m", "n_iters", "sink_frac", "start_ind")
   )
   registerDoParallel(cluster)
 
@@ -46,7 +54,9 @@ size_dist_sf <- function(gammas, n_samples, n, m, n_iters, sink_frac) {
       function(g) {
         print(paste0("Simulating with gamma = ", g))
         foreach(s = smp, .combine = "c", .inorder = FALSE) %dopar% {
-          get_sizes_sf(g, n, m, n_iters, sink_frac)
+          get_sizes_sf(
+            g, n, m, n_iters, sink_frac, start_ind, lcc = TRUE
+          )
         }
       }
     )
