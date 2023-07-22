@@ -3,7 +3,7 @@ get_sizes_sf <- function(
 ) {
   # return the avalanche sizes from a sandpile dynamics on a
   # scale-free network
-  source(here::here("source", "graph_utils.R"))
+  source(here::here("source", "utils.R"))
   source(here::here("source", "sandpile.R"))
 
   # generate a network with the static model
