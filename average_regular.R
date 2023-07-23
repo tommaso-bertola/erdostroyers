@@ -6,7 +6,7 @@ alphas <- c(0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.
 alphas<-seq(from=0, to=0.25, by=0.01)
 
 n <- 1000
-k <- 3
+k <- 4
 # k_min <- 1
 # k_max <- n
 # gamma <- 3
@@ -69,7 +69,7 @@ deg <- data.frame(
 
 conf <- rbind(btw, rnd, deg)
 
-write.csv(conf, "re_1000n_3k_40means_zoom.csv")
+write.csv(conf, "re_1000n_4k_40means_zoom.csv")
 
 # df <- data.frame(
 #     alpha = alphas,

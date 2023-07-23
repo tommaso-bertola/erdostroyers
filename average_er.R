@@ -7,7 +7,7 @@ source("delete_func.R")
 alphas<-seq(from=0, to=0.3, by=0.01)
 
 n <- 1000
-p <-  1.1*log(n) / n
+p <-  1.3*log(n) / n
 # k_min <- 2
 # k_max <- n
 # gamma <- 3
@@ -84,4 +84,4 @@ deg <- data.frame(
 
 conf <- rbind(btw, rnd, deg)
 
-write.csv(conf, "er_1000n_11lognnp_40means_zoom.csv")
+write.csv(conf, "er_1000n_13lognnp_40means_zoom.csv")

@@ -50,7 +50,7 @@ alphas <- c(0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.
 n <- 1000
 k_min <- 2
 k_max <- n
-gamma <- 2.8
+gamma <- 3.1
 weights <- (k_min:k_max)^(-gamma)
 
 n_averages <- 40
@@ -119,4 +119,4 @@ deg <- data.frame(
 
 conf <- rbind(btw, rnd, deg)
 
-write.csv(conf, "conf_1000n_2kmin_2.8gamma_40mean.csv")
+write.csv(conf, "conf_1000n_2kmin_3.1gamma_40mean.csv")
