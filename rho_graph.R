@@ -1,4 +1,4 @@
-if(F){
+if(T){
     df = read.table("network_rho.csv")
     df2 = read.table("network_rho_dist.csv")
 } else {
@@ -26,7 +26,7 @@ colors = c("black", "gray50", "red", "pink", "orange")
 xmin=min(c(x,x2))
 xmax=max(c(x,x2))
 
-plot(x, y, ylim=c(-0.1, 1.1), xlim=c(xmin, xmax), col=colors[n])
+plot(x, y, ylim=c(-0.1, 1.1), xlim=c(xmin, xmax), col=colors[n], xlab="p", ylab="\u3c1")
 arrows(x, y+s, x, y-s, code=3, len=0.05, angle=90, col=colors[n])
 lines(x,y)
 

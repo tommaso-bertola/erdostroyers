@@ -15,7 +15,9 @@ if(T) {
 
 d = distances(g)
 
-new_packets = c(25,30,35)
+new_packets = c(40)
+
+print(new_packets)
 
 tmax = 1000
 
