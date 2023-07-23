@@ -50,7 +50,6 @@ sandpile <- function(
       d_cnt <- 1
       top <- pick
       g_cnt <- loads[pick]
-      whens <- c(whens, t)
 
       loads[pick] <- 0
       # select neighbours and offload
@@ -103,6 +102,7 @@ sandpile <- function(
       if (is_bulk) {
         durations <- c(durations, d_cnt)
         toppled[[a_cnt]] <- top
+        whens <- c(whens, t)
         areas <- c(areas, length(unique(top)))
         sizes <- c(sizes, length(top))
         tot_gr <- c(tot_gr, sum(loads))
