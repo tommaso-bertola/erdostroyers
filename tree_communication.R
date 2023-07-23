@@ -16,7 +16,9 @@ if(T) {
 d = distances(g)
 
 #new_packets = c(0.5, 1.5, 3, 10)
-new_packets= c(1,2,3)
+#new_packets= c(1,2,2.5,2.7,3)
+#new_packets = c(2.5, 2.55, 2.6, 3)
+new_packets = c(3, 5, 7, 10, 12, 15, 18)
 
 tmax = 1000
 
@@ -69,7 +71,7 @@ for(pi in 1:length(new_packets)) {
           #packets[j, "curr"] = closest_neighbors[sample(length(closest_neighbors), 1)]
           #first sample one of the closest neighbors randomly, then compute q_ij
           closest_neighbor = closest_neighbors[sample(length(closest_neighbors), 1)]
-          gamma = 1.5
+          gamma = 1
           #xab = runif(1, min=0, max=1) #change to one to switch off noise
           xab = 1
           fa = ifelse(length(nodes_queue[[packets[j,"curr"]]])>0, length(nodes_queue[[packets[j,"curr"]]]), 1)
@@ -114,4 +116,9 @@ if(length(new_packets)!=1) {
 dev.off()
 
 ###order parameter
+diffs = c()
+for(i in 1:length(new_packets)) {
+  diffs=c(diffs, mean(diff(A[i,(tmax-400):tmax], lag=10))/(10*new_packets[i]))
+}
+print(diffs)
 

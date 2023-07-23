@@ -1,6 +1,0 @@
-# prop_name, value
-name,roadnet (CA)
-description,"Road networks from three US states (CA, PA, TX), in which edges are stretches of road and vertices are intersections of roads."
-citation,"['J. Leskovec, K. Lang, A. Dasgupta, M. Mahoney. \"Community Structure in Large Networks: Natural Cluster Sizes and the Absence of Large Well-Defined Clusters.\" Internet Mathematics 6(1), 29-123 (2009). arxiv:0810.1355, http://arxiv.org/abs/0810.1355']"
-url,http://snap.stanford.edu/data/roadNet-CA.html
-tags,"['Transportation', 'Roads', 'Unweighted']"
