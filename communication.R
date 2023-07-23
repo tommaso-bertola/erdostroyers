@@ -15,13 +15,14 @@ if(F) {
 
 d = distances(g)
 
-new_packets = c(13, 20, 21)
+new_packets = c(35, 40, 45)
 
 tmax = 1000
 
 A = matrix(nrow=length(new_packets), ncol=tmax)
 
-h = 0.82
+# h = 0.82
+h = 1
 
 for(pi in 1:length(new_packets)) {
     nodes_queue = list()
@@ -92,12 +93,12 @@ for(pi in 1:length(new_packets)) {
 
 
 
-# colors=c("red", "green", "blue", "pink", "violet", "orange", "#eeee00")
+colors=c("red", "green", "blue", "pink", "violet", "orange", "#eeee00")
 
 # png("A_net.png")
 # plot(A[length(new_packets),])
-# ymax=par("usr")[4]
-# plot(A[length(new_packets),]/new_packets[len(new_packets)], type="l", main=NA, xlab="time", ylab="Active packets", ylim=c(0, ymax))
+# ymax=par("usr")[4]/new_packets[length(new_packets)]
+# plot(A[length(new_packets),]/new_packets[length(new_packets)], type="l", main=NA, xlab="time", ylab="Active packets", ylim=c(0, ymax))
 # if(length(new_packets)!=1) {
 #     for(i in 1:(length(new_packets)-1)) {
 #         lines(A[i,]/new_packets[i], col=colors[i])
