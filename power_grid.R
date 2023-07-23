@@ -8,7 +8,7 @@ source("source/sandpile.R")
 source("source/size_distribution_sf.R")
 source("source/utils.R")
 
-wus_edges <- fread("./opsahl-powergrid/out.opsahl-powergrid", skip = 2)
+wus_edges <- fread("network-data/out.opsahl-powergrid", skip = 2)
 g <- graph_from_edgelist(as.matrix(wus_edges), directed = FALSE)
 
 max_cap <- sum(degree(g) - 1)

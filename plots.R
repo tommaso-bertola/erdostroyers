@@ -7,7 +7,7 @@ source("source/sandpile.R")
 my_font <- "Fira Sans"
 my_pal <- wesanderson::wes_palette("Zissou1", 5)[c(1, 3, 5)]
 
-wus <- fread("opsahl-powergrid/out.opsahl-powergrid", skip = 2)
+wus <- fread("network-data/out.opsahl-powergrid", skip = 2)
 g_wus <- graph_from_edgelist(as.matrix(wus), directed = FALSE)
 
 sp <- sandpile(g_wus, n_iters = 4e4, sink_frac = 0.01)
@@ -48,8 +48,6 @@ ggsave(
   width = 11, height = 7, units = "cm"
 )
 
-
-
 eta <- fread("eta_dataframe.out")
 net_names <- c("Scale-free", "Erdős-Rényi", "Watts-Strogatz", "Barabási")
 names(net_names) <- eta[, unique(network)]
@@ -63,8 +61,8 @@ ggplot(eta, aes(m, eta, colour = network, shape = network)) +
   geom_line(linewidth = 0.25) +
   scale_x_continuous(breaks = scales::pretty_breaks()) +
   scale_y_continuous(breaks = scales::pretty_breaks()) +
-#  scale_colour_brewer(palette = "Dark2", labels = net_names) +
-#  scale_shape_discrete(labels = net_names) +
+  scale_colour_brewer(palette = "Dark2", labels = net_names) +
+  scale_shape_discrete(labels = net_names) +
   labs(
     x = "Number of edges m", y = "Effective capacity η",
     colour = "Model", shape = "Model"

@@ -70,7 +70,7 @@ fit_sizes <- function(data) {
 }
 
 # read from file and extract counts
-szd <- fread("out-files/size_dist.out")
+szd <- fread("out-data/size_dist.out")
 szd[, sizes := stringr::str_split(szd$sizes, "\\|") |> lapply(as.integer)]
 str(szd) # `sizes` should be a list of integer vectors
 

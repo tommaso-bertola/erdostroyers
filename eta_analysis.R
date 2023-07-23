@@ -65,7 +65,7 @@ for(type in type_list){
                              clus = clus_list,  diam = diam_list, m = edge_list))
 }
 
-fwrite(df, "eta_dataframe.out")
+fwrite(df, "out-data/eta_dataframe.out")
 ggplot(data = df) +
   geom_line(aes(x = m, y = eta, colour = network), linewidth = 1)
 
