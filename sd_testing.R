@@ -70,7 +70,7 @@ fit_sizes <- function(data) {
 }
 
 # read from file and extract counts
-szd <- fread("size_dist.out")
+szd <- fread("out-files/size_dist.out")
 szd[, sizes := stringr::str_split(szd$sizes, "\\|") |> lapply(as.integer)]
 str(szd) # `sizes` should be a list of integer vectors
 
@@ -105,7 +105,7 @@ szd[gamma %in% c(2.1, 2.5, 2.9)] |>
     theme_bw(base_size = 10, base_family = global_font)
 
 ggsave(
-  "size_dist_fit.pdf", device = cairo_pdf,
+  "figures/size_dist_fit.pdf", device = cairo_pdf,
   width = 14, height = 8, units = "cm"
 )
 
@@ -116,65 +116,3 @@ fit_res <- szd_fit[, .(taus = unlist(taus)), keyby = gamma
                          q2.5 = quantile(taus, 0.025),
                          q97.5 = quantile(taus, 0.975))
                      , keyby = gamma]
-
-library(rjags)
-
-lin_model <- "
-  model {
-    tau <- 1 / sigma^2
-
-    for (i in 1:length(x)) {
-      mu[i] <- a + b * x[i]
-      y[i] ~ dnorm(mu[i], tau)
-    }
-
-    a ~ dnorm(0, 1e-6)
-    b ~ dnorm(0, 1e-6)
-    sigma ~ dexp(0.001)
-  }"
-
-inits <- function(chain) {
-  list(
-    a = runif(1, 0, 10), b = runif(1, -2, 0), sigma = runif(1, 0, 1)
-  )
-}
-
-jm <- jags.model(textConnection(lin_model), test, inits, n.chains = 3)
-chain <- coda.samples(jm, c("a", "b", "sigma"), n.iter = 5e4)
-
-plot_chains <- function(chain, params) {
-  require(bayesplot)
-
-  trace_plt <- mcmc_trace(
-    chain, pars = params,
-    facet_args = list(nrow = length(params), labeller = label_parsed)
-  ) +
-    facet_text(size = 15) +
-    labs(title = "Traces") +
-    theme_default(base_size = 15, base_family = global_font)
-
-  dens_plt <- mcmc_dens_overlay(
-    chain, pars = params,
-    facet_args = list(nrow = length(params), labeller = label_parsed)
-  ) +
-    facet_text(size = 15) +
-    labs(title = "Densities") +
-    theme_default(base_size = 15, base_family = global_font)
-
-  gridExtra::grid.arrange(trace_plt, dens_plt, ncol = 2)
-}
-
-
-# choose three gammas (too overcrowded otherwise) and plot
-szd[gamma %in% c(2.1, 2.5, 2.9)] |>
-  ggplot(aes(x, y, colour = gamma, shape = gamma)) +
-    geom_point(size = 2) +
-    geom_line() +
-    scale_colour_manual(values = my_pal) +
-    scale_x_log10() +
-    scale_y_log10() +
-    annotation_logticks() +
-    labs(
-      x = "Avalanche size", y = "Counts per network",
-      colour = "Exponent γ", shape = "Exponent γ"
-    )
