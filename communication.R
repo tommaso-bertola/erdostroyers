@@ -1,5 +1,5 @@
 library(igraph)
-if(F) {
+if(T) {
     load("modbagraph.RData")
     num_nodes = length(V(g)$name)
     print("using BA-like network")
@@ -15,7 +15,7 @@ if(F) {
 
 d = distances(g)
 
-new_packets = c(35, 40, 45)
+new_packets = c(25,30,35)
 
 tmax = 1000
 
