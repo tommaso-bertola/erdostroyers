@@ -44,7 +44,7 @@ logbins <- function(data, base = 10, dlog = 0.1) {
   upper <- upper[bin_window]
 
   # the values before bin_window are taken directly from the counts
-  x <- seq(1, lower[1] - 1)
+  x <- cnt$n[cnt$n < lower[1]] 
   y <- c(
     cnt$n[cnt$val %in% x], # these are from the counts
     # here we average the counts falling inside each remaining bin
